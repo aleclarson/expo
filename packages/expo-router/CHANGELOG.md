@@ -23,6 +23,8 @@
 - fix screen freeze after preview navigation ([#37881](https://github.com/expo/expo/pull/37881) by [@Ubax](https://github.com/Ubax))
 - fix detents in Modal ([#37981](https://github.com/expo/expo/pull/37981) by [@Ubax](https://github.com/Ubax))
 - fix(web): a11y focus trap issues in web modals ([#38026](https://github.com/expo/expo/pull/38026) by [@hirbod](https://github.com/hirbod))
+- use portal in Modal ([#37980](https://github.com/expo/expo/pull/37980) by [@Ubax](https://github.com/Ubax))
+
 
 ### 💡 Others
 
