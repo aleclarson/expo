@@ -82,9 +82,11 @@ function uniqueBy<T>(arr: T[], key: (item: T) => string): T[] {
   });
 }
 
+type FlatNodeTuple = [contextKey: string, absoluteRoute: string, node: RouteNode];
+
 // Given a nested route tree, return a flattened array of all routes that can be matched.
 export function getServerManifest(route: RouteNode): ExpoRouterServerManifestV1 {
-  function getFlatNodes(route: RouteNode, parentRoute: string = ''): [string, string, RouteNode][] {
+  function getFlatNodes(route: RouteNode, parentRoute: string = ''): FlatNodeTuple[] {
     // Use a recreated route instead of contextKey because we duplicate nodes to support array syntax.
     const absoluteRoute = [parentRoute, route.route].filter(Boolean).join('/');
 
@@ -128,9 +130,14 @@ export function getServerManifest(route: RouteNode): ExpoRouterServerManifestV1 
     ([path]) => path
   )
     .map((redirect) => {
-      redirect[1] =
-        flat.find(([, , route]) => route.contextKey === redirect[2].destinationContextKey)?.[0] ??
-        '/';
+      // For external redirects, use the destinationContextKey as the destination URL
+      if (/^https?:\/\//.test(redirect[2].destinationContextKey!)) {
+        redirect[1] = redirect[2].destinationContextKey!;
+      } else {
+        redirect[1] =
+          flat.find(([, , route]) => route.contextKey === redirect[2].destinationContextKey)?.[0] ??
+          '/';
+      }
 
       return redirect;
     })

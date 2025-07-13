@@ -47,9 +47,15 @@ function getServerManifest(route) {
         (route.type === 'rewrite' && (route.methods === undefined || route.methods.includes('GET')))), ([path]) => path);
     const redirects = uniqueBy(flat.filter(([, , route]) => route.type === 'redirect'), ([path]) => path)
         .map((redirect) => {
-        redirect[1] =
-            flat.find(([, , route]) => route.contextKey === redirect[2].destinationContextKey)?.[0] ??
-                '/';
+        // For external redirects, use the destinationContextKey as the destination URL
+        if (/^https?:\/\//.test(redirect[2].destinationContextKey)) {
+            redirect[1] = redirect[2].destinationContextKey;
+        }
+        else {
+            redirect[1] =
+                flat.find(([, , route]) => route.contextKey === redirect[2].destinationContextKey)?.[0] ??
+                    '/';
+        }
         return redirect;
     })
         .reverse();

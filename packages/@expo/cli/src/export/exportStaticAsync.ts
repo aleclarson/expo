@@ -121,6 +121,11 @@ function makeRuntimeEntryPointsAbsolute(manifest: ExpoRouterRuntimeManifest, app
   modifyRouteNodeInRuntimeManifest(manifest, (route) => {
     if (Array.isArray(route.entryPoints)) {
       route.entryPoints = route.entryPoints.map((entryPoint) => {
+        // TODO(@hassankhan): external URLs should really be filtered out from here already
+        if (/^https?:\/\//.test(entryPoint)) {
+          return entryPoint;
+        }
+
         if (entryPoint.startsWith('.')) {
           return path.resolve(appDir, entryPoint);
         } else if (!path.isAbsolute(entryPoint)) {
